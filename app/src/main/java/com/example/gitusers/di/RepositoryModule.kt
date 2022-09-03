@@ -1,5 +1,7 @@
 package com.example.gitusers.di
 
+import com.example.gitusers.repositories.CacheGitUserRepository
+import com.example.gitusers.repositories.CacheGitUserRepositoryImpl
 import com.example.gitusers.repositories.GitUsersRepository
 import com.example.gitusers.repositories.GitUsersRepositoryImpl
 import dagger.Binds
@@ -15,5 +17,9 @@ abstract class RepositoryModule {
     @Binds
     @ViewModelScoped
     abstract fun provideNetworkRepository( gitUsersRepositoryImpl: GitUsersRepositoryImpl): GitUsersRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun provideCacheRepository( cacheGitUsersRepositoryImpl: CacheGitUserRepositoryImpl): CacheGitUserRepository
 
 }
