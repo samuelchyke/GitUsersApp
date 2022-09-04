@@ -1,8 +1,11 @@
 package com.example.gitusers.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "user_table")
 data class CacheGitUser(
     @PrimaryKey
@@ -24,7 +27,7 @@ data class CacheGitUser(
     val subscriptions_url: String,
     val type: String,
     val url: String
-)
+) : Parcelable
 
 fun List<GitUser>.mapToCache(): List<CacheGitUser> {
     return this.map { user ->

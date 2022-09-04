@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitusers.databinding.FragmentFirstBinding
 import com.example.gitusers.model.mapToCache
 import com.example.gitusers.utils.NetworkResult
 import kotlinx.coroutines.launch
+
 
 class HomeFragment : BaseFragment() {
 
@@ -41,7 +44,16 @@ class HomeFragment : BaseFragment() {
             setRecyclerViewUsingDB()
         }
 
-
+        binding.searchVw.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            // Override onQueryTextSubmit method which is call when submit query is searched
+            override fun onQueryTextSubmit(query: String): Boolean {
+                observeData(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
         return binding.root
     }
 
@@ -63,6 +75,26 @@ class HomeFragment : BaseFragment() {
             }
         }
         gitViewModel.getUsers()
+    }
+
+    private fun observeData(letter:String) {
+        gitViewModel.searchedUsers.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    userAdapter.differ.submitList(response.data?.items?.mapToCache())
+                }
+                is NetworkResult.Error -> {
+                    response.message?.let { message ->
+                        showError(message)
+                    }
+                }
+                is NetworkResult.Loading -> {
+//                    showProgressBar()
+                }
+                else -> {}
+            }
+        }
+        gitViewModel.searchUsers(letter)
     }
 
     private fun setRecyclerViewUsingDB() = lifecycleScope.launch{

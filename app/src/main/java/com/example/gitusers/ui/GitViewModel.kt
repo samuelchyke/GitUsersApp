@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitusers.model.GitUser
+import com.example.gitusers.model.Search
 import com.example.gitusers.model.mapToCache
 import com.example.gitusers.repositories.CacheGitUserRepository
 import com.example.gitusers.repositories.GitUsersRepository
@@ -29,12 +30,14 @@ class GitViewModel @Inject constructor(
     private val _users: MutableLiveData<NetworkResult<List<GitUser>>> = MutableLiveData()
     val users: LiveData<NetworkResult<List<GitUser>>> get() = _users
 
-    fun getUsers() {
-        safeCallUsersFromNetwork()
-    }
+    private val _searchedUsers: MutableLiveData<NetworkResult<Search>> = MutableLiveData()
+    val searchedUsers: LiveData<NetworkResult<Search>> get() = _searchedUsers
+
+    fun getUsers() = safeCallUsersFromNetwork()
+
+    fun searchUsers(letter: String) = safeSearchUsersFromNetwork(letter)
 
     suspend fun getUsersFromDB() = cacheGitUserRepository.getGitUserFromDatabase()
-
 
     private fun safeCallUsersFromNetwork() =
         // RUN SCOPE ON MAIN THREAD
@@ -51,6 +54,30 @@ class GitViewModel @Inject constructor(
                     Toast.makeText(context, "No results", Toast.LENGTH_SHORT).show()
                     response = gitUserRepository.getUsers()
                     _users.postValue(response)
+                }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> _users.postValue(NetworkResult.Error("Network Failure"))
+                    else -> _users.postValue(NetworkResult.Error("Conversion Error"))
+                }
+            }
+        }
+
+        private fun safeSearchUsersFromNetwork(letter:String) =
+        // RUN SCOPE ON MAIN THREAD
+        viewModelScope.launch {
+            _users.postValue(NetworkResult.Loading())
+            try {
+                // NETWORK CONNECTED : MAKE NETWORK CALL
+                var response = gitUserRepository.searchUsers(letter)
+                _searchedUsers.postValue(response)
+                // SAVE RESULTS TO DATABASE IF USERS IS NOT NULL
+                response.data?.let {
+                    saveGitUsersToDataBase(it.items)
+                } ?: let {
+                    Toast.makeText(context, "No results", Toast.LENGTH_SHORT).show()
+                    response = gitUserRepository.searchUsers("A")
+                    _searchedUsers.postValue(response)
                 }
             } catch (t: Throwable) {
                 when (t) {

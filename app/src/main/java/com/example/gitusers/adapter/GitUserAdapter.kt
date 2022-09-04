@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gitusers.databinding.UserRowViewBinding
 import com.example.gitusers.model.CacheGitUser
 import com.example.gitusers.model.GitUser
+import com.example.gitusers.ui.fragments.HomeFragmentDirections
 import com.squareup.picasso.Picasso
 
 class GitUserAdapter : RecyclerView.Adapter<MyViewHolder>() {
@@ -26,10 +27,10 @@ class GitUserAdapter : RecyclerView.Adapter<MyViewHolder>() {
         val differ = differ.currentList[position]
         holder.bind(differ)
 
-//        holder.itemView.setOnClickListener {
-//            val directionToMainFragment = CocktailsFragmentDirections.actionMainToDetailFragment(differ)
-//            holder.itemView.findNavController().navigate(directionToMainFragment)
-//        }
+        holder.itemView.setOnClickListener {
+            val directionToMainFragment = HomeFragmentDirections.actionFirstFragmentToSecondFragment(differ)
+            holder.itemView.findNavController().navigate(directionToMainFragment)
+        }
     }
 
     override fun getItemCount(): Int = differ.currentList.size
