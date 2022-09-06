@@ -1,13 +1,15 @@
-package com.itc.cocktailapp.repository
+package com.example.gitusers.repository
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.gitusers.cache.GitUserDAO
+import com.example.gitusers.cache.GitUserDatabase
+import com.example.gitusers.model.CacheGitUser
+import com.example.gitusers.repositories.CacheGitUserRepositoryImpl
+import com.example.gitusers.repositories.GitUsersRepositoryImpl
 import com.google.common.truth.Truth.assertThat
-import com.itc.cocktailapp.cache.CocktailDatabase
-import com.itc.cocktailapp.cache.CocktailsDAO
-import com.itc.cocktailapp.model.CacheCocktails
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -15,28 +17,28 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class CacheCocktailRepositoryImplTest {
+class CacheGitUserRepositoryImplTest {
 
-    private lateinit var repository: CacheCocktailRepositoryImpl
-    private lateinit var db: CocktailDatabase
-    private lateinit var cocktailsDao: CocktailsDAO
-    private lateinit var cocktails: List<CacheCocktails>
+    private lateinit var repository: CacheGitUserRepositoryImpl
+    private lateinit var db: GitUserDatabase
+    private lateinit var gitUserDao: GitUserDAO
+    private lateinit var cocktails: List<CacheGitUser>
 
     @Before
     fun setUp() {
 
         val context = ApplicationProvider.getApplicationContext<Context>()
 
-        db = Room.inMemoryDatabaseBuilder(context, CocktailDatabase::class.java)
+        db = Room.inMemoryDatabaseBuilder(context, GitUserDatabase::class.java)
             .allowMainThreadQueries().build()
 
-        cocktailsDao = db.cocktailsDAO()
+        gitUserDao = db.gitUserDAO()
 
-        repository = CacheCocktailRepositoryImpl(cocktailsDao)
+        repository = CacheGitUserRepositoryImpl(gitUserDao)
 
         cocktails = listOf(
-            CacheCocktails(
-                "Test Cocktail",
+            CacheGitUser(
+                0,
                 "",
                 "",
                 "",
@@ -49,10 +51,7 @@ class CacheCocktailRepositoryImplTest {
                 "",
                 "",
                 "",
-                "",
-                "",
-                "",
-                "",
+                true,
                 "",
                 "",
                 "",
@@ -70,9 +69,9 @@ class CacheCocktailRepositoryImplTest {
     @Test
     fun `insert cocktails from database _ test cocktail`() = runBlocking {
 
-        repository.insertCocktailsToDatabase(cocktails)
+        repository.insertGitUserToDatabase(cocktails)
 
-        val byLetter = repository.getCocktailsFromDatabase("")
+        val byLetter = repository.getGitUserFromDatabase()
 
         byLetter.observeForever {
             assertThat(cocktails).isEqualTo(it)
@@ -83,7 +82,7 @@ class CacheCocktailRepositoryImplTest {
     @Test
     fun `get cocktails from database _ not null`() = runBlocking{
 
-        val byLetter = repository.getCocktailsFromDatabase("")
+        val byLetter = repository.getGitUserFromDatabase()
 
         assertThat(byLetter).isNotNull()
 

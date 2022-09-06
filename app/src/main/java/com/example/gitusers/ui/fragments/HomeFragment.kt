@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isEmpty
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitusers.databinding.FragmentFirstBinding
 import com.example.gitusers.model.mapToCache
 import com.example.gitusers.utils.NetworkResult
+import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.coroutines.launch
 
 
@@ -38,14 +40,17 @@ class HomeFragment : BaseFragment() {
     ): View {
 
         initRecyclerView()
+
         if (hasInternetConnection()){
             observeData()
-        }else{
+        }else if (hasInternetConnection()) {
+            observeData(searchVw.query as String)
+        } else{
             setRecyclerViewUsingDB()
         }
 
         binding.searchVw.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            // Override onQueryTextSubmit method which is call when submit query is searched
+
             override fun onQueryTextSubmit(query: String): Boolean {
                 observeData(query)
                 return true
@@ -101,6 +106,11 @@ class HomeFragment : BaseFragment() {
         gitViewModel.getUsersFromDB().observe(viewLifecycleOwner){
             userAdapter.differ.submitList(it)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.searchVw.clearFocus()
     }
 
 }

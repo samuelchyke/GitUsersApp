@@ -2,8 +2,8 @@
     <string name="app_name">GitUsers</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="home_fragment_label">Home Fragment</string>
-    <string name="user_fragment_label">User Fragment</string>
+    <string name="home_fragment_label">Home</string>
+    <string name="user_fragment_label">Users</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
