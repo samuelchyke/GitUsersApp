@@ -41,10 +41,11 @@ class HomeFragment : BaseFragment() {
 
         initRecyclerView()
 
-        if (hasInternetConnection()){
+        if (hasInternetConnection()&&
+            binding.searchVw.query.toString().isEmpty()){
             observeData()
         }else if (hasInternetConnection()) {
-            observeData(searchVw.query as String)
+            search()
         } else{
             setRecyclerViewUsingDB()
         }
@@ -59,7 +60,21 @@ class HomeFragment : BaseFragment() {
                 return true
             }
         })
+
         return binding.root
+    }
+
+    private fun search(){
+        binding.searchVw.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                observeData(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
     }
 
     private fun observeData() {
@@ -110,8 +125,9 @@ class HomeFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        binding.searchVw.clearFocus()
     }
+
+
 
 }
 
