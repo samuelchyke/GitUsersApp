@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitusers.databinding.FragmentFirstBinding
 import com.example.gitusers.model.mapToCache
 import com.example.gitusers.utils.NetworkResult
-import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.coroutines.launch
 
 
