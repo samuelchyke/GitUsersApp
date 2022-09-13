@@ -4,10 +4,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.gitusers.api.GitServiceApi
 import com.example.gitusers.model.GitUser
 import com.example.gitusers.repositories.GitUsersRepositoryImpl
+import com.example.gitusers.utils.HandleGitUserResponse
+import com.example.gitusers.utils.HandleSearchResponse
 import com.google.common.truth.Truth.assertThat
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +27,9 @@ class GitUserRepositoryImplTest {
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        repository = GitUsersRepositoryImpl(api)
+        repository = GitUsersRepositoryImpl(
+            api
+        )
     }
 
     @Test
@@ -75,7 +77,7 @@ class GitUserRepositoryImplTest {
                     "",
                     "",
                     "",
-                )))).isEqualTo((response.data))
+                )))).isEqualTo((response.body()))
         }
     }
 }

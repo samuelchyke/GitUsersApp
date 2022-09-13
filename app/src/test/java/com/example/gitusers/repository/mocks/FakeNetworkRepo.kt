@@ -4,6 +4,7 @@ import com.example.gitusers.model.GitUser
 import com.example.gitusers.model.Search
 import com.example.gitusers.repositories.GitUsersRepository
 import com.example.gitusers.utils.NetworkResult
+import retrofit2.Response
 
 class FakeNetworkRepo: GitUsersRepository {
 
@@ -13,33 +14,34 @@ class FakeNetworkRepo: GitUsersRepository {
         networkError = value
     }
 
-    override suspend fun getUsers(): NetworkResult<List<GitUser>> {
-        return NetworkResult.Success((listOf(
-            GitUser(
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                0,
-                "",
-                "",
-                "",
-                "",
-                "",
-                true,
-                "",
-                "",
-                "",
-                "",
-                ))))
+    override suspend fun getUsers(): Response<List<GitUser>> {
+        return Response.success(
+            listOf(
+                GitUser(
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    0,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    true,
+                    "",
+                    "",
+                    "",
+                    "",
 
+        )))
     }
 
-    override suspend fun searchUsers(letter: String): NetworkResult<Search> {
-        return NetworkResult.Success(Search(
+    override suspend fun searchUsers(letter: String): Response<Search> {
+        return Response.success(Search(
             incomplete_results = false,
             items = (listOf(
                 GitUser(

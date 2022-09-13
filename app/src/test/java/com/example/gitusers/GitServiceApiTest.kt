@@ -17,7 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @RunWith(AndroidJUnit4::class)
-class CocktailServiceApiTest {
+class GitServiceApiTest {
 
     lateinit var mockWebServer: MockWebServer
     lateinit var apiService: GitServiceApi
@@ -41,7 +41,7 @@ class CocktailServiceApiTest {
             mockWebServer.enqueue(mockResponse.setBody("[]"))
             val response = apiService.getUsers()
             val request = mockWebServer.takeRequest()
-            assertEquals("/api/json/v1/1/search.php?f=",request.path)
+            assertEquals("/users",request.path)
             assertThat(true).isEqualTo(response.body()?.isEmpty())
         }
     }

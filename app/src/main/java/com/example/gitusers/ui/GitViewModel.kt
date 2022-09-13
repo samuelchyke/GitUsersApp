@@ -11,6 +11,8 @@ import com.example.gitusers.model.Search
 import com.example.gitusers.model.mapToCache
 import com.example.gitusers.repositories.CacheGitUserRepository
 import com.example.gitusers.repositories.GitUsersRepository
+import com.example.gitusers.utils.HandleGitUserResponse
+import com.example.gitusers.utils.HandleSearchResponse
 import com.example.gitusers.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,6 +26,8 @@ import javax.inject.Inject
 class GitViewModel @Inject constructor(
     private val gitUserRepository : GitUsersRepository,
     private val cacheGitUserRepository : CacheGitUserRepository,
+    private val handleGitUserResponse: HandleGitUserResponse,
+    private val handleSearchResponse: HandleSearchResponse,
     @ApplicationContext private val context: Context
 ) : ViewModel(){
 
@@ -44,15 +48,16 @@ class GitViewModel @Inject constructor(
         viewModelScope.launch {
             _users.postValue(NetworkResult.Loading())
             try {
-                // NETWORK CONNECTED : MAKE NETWORK CALL
-                var response = gitUserRepository.getUsers()
+                // NETWORK CONNECTED : MAKE NETWORK CALL : HANDLE RESPONSE
+                val response = handleGitUserResponse.handleResponse(
+                    gitUserRepository.getUsers()
+                )
                 _users.postValue(response)
                 // SAVE RESULTS TO DATABASE IF USERS IS NOT NULL
                 response.data?.let {
                     saveGitUsersToDataBase(it)
                 } ?: let {
                     Toast.makeText(context, "No results", Toast.LENGTH_SHORT).show()
-                    response = gitUserRepository.getUsers()
                     _users.postValue(response)
                 }
             } catch (t: Throwable) {
@@ -69,15 +74,15 @@ class GitViewModel @Inject constructor(
             _users.postValue(NetworkResult.Loading())
             try {
                 // NETWORK CONNECTED : MAKE NETWORK CALL
-                var response = gitUserRepository.searchUsers(letter)
+                val response = handleSearchResponse.handleResponse(
+                    gitUserRepository.searchUsers(letter)
+                )
                 _searchedUsers.postValue(response)
                 // SAVE RESULTS TO DATABASE IF USERS IS NOT NULL
                 response.data?.let {
                     saveGitUsersToDataBase(it.items)
                 } ?: let {
                     Toast.makeText(context, "No results", Toast.LENGTH_SHORT).show()
-                    response = gitUserRepository.searchUsers("A")
-                    _searchedUsers.postValue(response)
                 }
             } catch (t: Throwable) {
                 when (t) {

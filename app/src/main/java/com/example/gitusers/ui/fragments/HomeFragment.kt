@@ -103,8 +103,10 @@ class HomeFragment : BaseFragment() {
                     userAdapter.differ.submitList(response.data?.items?.mapToCache())
                 }
                 is NetworkResult.Error -> {
-                    response.message?.let { message ->
-                        showError(message)
+                    response.data?.items?.isEmpty().let {
+                        response.message?.let { message ->
+                            showError(message)
+                        }
                     }
                 }
                 is NetworkResult.Loading -> {
